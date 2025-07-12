@@ -39,29 +39,29 @@ func Expand[T any](v []T) Expanded[T] {
 	return v
 }
 
-type ExpandedJoin[T any] struct {
-	Expanded[T]
+type ExpandedJoin struct {
+	Expander
 	join func([]string) string
 }
 
-var _ Expander = (*ExpandedJoin[any])(nil)
+var _ Expander = (*ExpandedJoin)(nil)
 
-func (e ExpandedJoin[T]) ExpandJoin(values []string) string {
+func (e ExpandedJoin) ExpandJoin(values []string) string {
 	return e.join(values)
 }
 
-func ExpandedJoinFunc[T any](e Expanded[T], join func([]string) string) ExpandedJoin[T] {
-	return ExpandedJoin[T]{
-		Expanded: e,
+func ExpandedJoinFunc(e Expander, join func([]string) string) ExpandedJoin {
+	return ExpandedJoin{
+		Expander: e,
 		join:     join,
 	}
 }
 
-func ExpandJoinFunc[T any](v []T, join func([]string) string) ExpandedJoin[T] {
+func ExpandJoinFunc[T any](v []T, join func([]string) string) ExpandedJoin {
 	return ExpandedJoinFunc(Expanded[T](v), join)
 }
 
-func ExpandJoin[T any](v []T, join string) ExpandedJoin[T] {
+func ExpandJoin[T any](v []T, join string) ExpandedJoin {
 	return ExpandJoinFunc(v, func(values []string) string {
 		return strings.Join(values, join)
 	})

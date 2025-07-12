@@ -122,4 +122,23 @@ func TestExpander(t *testing.T) {
 	if !reflect.DeepEqual(args, wantArgs) {
 		t.Errorf("\n got:%v\nwant:%v", args, wantArgs)
 	}
+
+	q = New("SELECT id FROM ? WHERE name IN (?)", Embedded("table"), ExpandedJoinFunc(expander{"john", "mary"}, func(values []string) string {
+		return strings.Join(values, "#")
+	}))
+	sql, args, err = q.ToSql()
+
+	if err != nil {
+		t.Errorf("got error: %v", err)
+	}
+
+	want = "SELECT id FROM table WHERE name IN (?#?)"
+	if want != sql {
+		t.Errorf("\n got:%v\nwant:%v", sql, want)
+	}
+
+	wantArgs = []any{"john", "mary"}
+	if !reflect.DeepEqual(args, wantArgs) {
+		t.Errorf("\n got:%v\nwant:%v", args, wantArgs)
+	}
 }
