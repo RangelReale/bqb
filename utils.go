@@ -66,7 +66,13 @@ func convertArg(text string, arg any) (string, []any, []error) {
 			newPh = append(newPh, paramPh)
 			newArgs = append(newArgs, i)
 		}
-		text = strings.Replace(text, "?", strings.Join(newPh, ","), 1)
+		var expandValue string
+		if ej, ok := arg.(ExpanderJoin); ok {
+			expandValue = ej.ExpandJoin(newPh)
+		} else {
+			expandValue = strings.Join(newPh, ",")
+		}
+		text = strings.Replace(text, "?", expandValue, 1)
 
 	case []int:
 		newPh := []string{}

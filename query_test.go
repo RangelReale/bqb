@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -52,17 +53,20 @@ func TestArrays(t *testing.T) {
 }
 
 func TestExpand(t *testing.T) {
-	// float64 does not expand automatically
-	q := New("(?)", Expand([]int16{14, 16}))
+	q := New("(?) (?)", Expand([]int16{14, 16}), ExpandWith([]int64{14, 16, 4, 5}, "#"))
 	sql, params, _ := q.ToSql()
 
-	if len(params) != 2 {
-		t.Errorf("invalid params; got: %v, want: %v", len(params), 12)
+	if len(params) != 6 {
+		t.Errorf("invalid params; got: %v, want: %v", len(params), 6)
 	}
 
-	want := "(?,?)"
+	want := "(?,?) (?#?#?#?)"
 	if sql != want {
 		t.Errorf("got: %q, want: %q", sql, want)
+	}
+	wantParams := []any{int16(14), int16(16), int64(14), int64(16), int64(4), int64(5)}
+	if !reflect.DeepEqual(params, wantParams) {
+		t.Errorf("got: %v, want: %v", params, wantParams)
 	}
 }
 

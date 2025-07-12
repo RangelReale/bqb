@@ -54,14 +54,14 @@ func (e ExpandedWith[T]) ExpandJoin(values []string) string {
 	return e.join(values)
 }
 
-func ExpandWith[T any](v []T, join func([]string) string) ExpandedWith[T] {
+func ExpandFunc[T any](v []T, join func([]string) string) ExpandedWith[T] {
 	return ExpandedWith[T]{
 		Expanded: Expanded[T](v),
 		join:     join,
 	}
 }
 
-func ExpandWithChar[T any](v []T, join string) ExpandedWith[T] {
+func ExpandWith[T any](v []T, join string) ExpandedWith[T] {
 	return ExpandedWith[T]{
 		Expanded: Expanded[T](v),
 		join:     func(v []string) string { return strings.Join(v, join) },
