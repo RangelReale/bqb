@@ -15,7 +15,8 @@ const (
 	// SQL generic dialect
 	SQL Dialect = "sql"
 
-	paramPh = "{{xX_PARAM_Xx}}"
+	paramPh  = "{{xX_PARAM_Xx}}"
+	ignorePH = "{{OOO_INVALID_OOO}}"
 )
 
 // Embedded is a string type that is directly embedded into the query.

@@ -3,6 +3,7 @@ package bqb
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -14,6 +15,10 @@ func dialectReplace(dialect Dialect, sql string, params []any) (string, error) {
 		doubleQuestionMarkDelimiter = "??"
 		parameterPlaceholder        = paramPh
 	)
+
+	if strings.Contains(sql, ignorePH) {
+		return "", errors.New("source query contains internal placeholders")
+	}
 
 	switch dialect {
 	case RAW:
@@ -186,6 +191,10 @@ func checkParamCounts(text, original string, args []any) error {
 
 func makePart(text string, args ...any) QueryPart {
 	tempPh := "XXX___XXX"
+
+	text = strings.ReplaceAll(text, paramPh, ignorePH) // don't allow the temporary placeholders
+	text = strings.ReplaceAll(text, tempPh, ignorePH)  // don't allow the temporary placeholders
+
 	originalText := text
 	text = strings.ReplaceAll(text, "??", tempPh)
 
