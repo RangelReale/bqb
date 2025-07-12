@@ -35,7 +35,6 @@ func (e Expanded[T]) ExpandItems() []any {
 	if len(e) == 0 {
 		return nil
 	}
-
 	ret := make([]any, len(e))
 	for idx, item := range e {
 		ret[idx] = item
@@ -44,32 +43,31 @@ func (e Expanded[T]) ExpandItems() []any {
 }
 
 func Expand[T any](v []T) Expanded[T] {
-	return Expanded[T](v)
+	return v
 }
 
-type ExpandedWith[T any] struct {
+type ExpandedJoin[T any] struct {
 	Expanded[T]
 	join func([]string) string
 }
 
-var _ Expander = (*ExpandedWith[any])(nil)
+var _ Expander = (*ExpandedJoin[any])(nil)
 
-func (e ExpandedWith[T]) ExpandJoin(values []string) string {
+func (e ExpandedJoin[T]) ExpandJoin(values []string) string {
 	return e.join(values)
 }
 
-func ExpandFunc[T any](v []T, join func([]string) string) ExpandedWith[T] {
-	return ExpandedWith[T]{
+func ExpandJoinFunc[T any](v []T, join func([]string) string) ExpandedJoin[T] {
+	return ExpandedJoin[T]{
 		Expanded: Expanded[T](v),
 		join:     join,
 	}
 }
 
-func ExpandWith[T any](v []T, join string) ExpandedWith[T] {
-	return ExpandedWith[T]{
-		Expanded: Expanded[T](v),
-		join:     func(v []string) string { return strings.Join(v, join) },
-	}
+func ExpandJoin[T any](v []T, join string) ExpandedJoin[T] {
+	return ExpandJoinFunc(v, func(values []string) string {
+		return strings.Join(values, join)
+	})
 }
 
 type Expander interface {

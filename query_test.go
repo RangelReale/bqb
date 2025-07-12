@@ -53,7 +53,7 @@ func TestArrays(t *testing.T) {
 }
 
 func TestExpand(t *testing.T) {
-	q := New("(?) (?)", Expand([]int16{14, 16}), ExpandWith([]int64{14, 16, 4, 5}, "#"))
+	q := New("(?) (?)", Expand([]int16{14, 16}), ExpandJoin([]int64{14, 16, 4, 5}, "#"))
 	sql, params, _ := q.ToSql()
 
 	if len(params) != 6 {
