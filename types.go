@@ -45,6 +45,10 @@ type Expander interface {
 	ExpandItems() []any
 }
 
+type ExpanderJoin interface {
+	ExpandJoin(values []string) string
+}
+
 // JsonMap is a custom type which tells bqb to convert the parameter to
 // a JSON object without requiring reflection.
 type JsonMap map[string]any
