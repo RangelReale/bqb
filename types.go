@@ -32,9 +32,13 @@ type Embedder interface {
 type Expanded[T any] []T
 
 func (e Expanded[T]) ExpandItems() []any {
-	var ret []any
-	for _, item := range e {
-		ret = append(ret, item)
+	if len(e) == 0 {
+		return nil
+	}
+
+	ret := make([]any, len(e))
+	for idx, item := range e {
+		ret[idx] = item
 	}
 	return ret
 }
