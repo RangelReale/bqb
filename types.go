@@ -1,5 +1,7 @@
 package bqb
 
+import "strings"
+
 // Dialect holds the Query dialect
 type Dialect string
 
@@ -37,8 +39,33 @@ func (e Expanded[T]) ExpandItems() []any {
 	return ret
 }
 
-func NewExpanded[T any](v []T) Expanded[T] {
+func Expand[T any](v []T) Expanded[T] {
 	return Expanded[T](v)
+}
+
+type ExpandedWith[T any] struct {
+	Expanded[T]
+	join func([]string) string
+}
+
+var _ Expander = (*ExpandedWith[any])(nil)
+
+func (e ExpandedWith[T]) ExpandJoin(values []string) string {
+	return e.join(values)
+}
+
+func ExpandWith[T any](v []T, join func([]string) string) ExpandedWith[T] {
+	return ExpandedWith[T]{
+		Expanded: Expanded[T](v),
+		join:     join,
+	}
+}
+
+func ExpandWithChar[T any](v []T, join string) ExpandedWith[T] {
+	return ExpandedWith[T]{
+		Expanded: Expanded[T](v),
+		join:     func(v []string) string { return strings.Join(v, join) },
+	}
 }
 
 type Expander interface {
