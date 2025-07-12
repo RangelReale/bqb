@@ -323,7 +323,7 @@ func TestParamsMissing(t *testing.T) {
 	if err == nil {
 		t.Errorf("missing ? considered valid")
 	}
-	if !strings.Contains(err.Error(), "missing") {
+	if !strings.Contains(err.Error(), "expected") {
 		t.Errorf("got wrong error for missing ?")
 	}
 }
@@ -740,9 +740,12 @@ func TestValuerError(t *testing.T) {
 	var v valuer
 	q := New("?", v)
 	_, _, err := q.ToSql()
+	if err == nil {
+		t.Fatalf("got nil error from valuer ToRaw()")
+	}
 
 	wantError := "error creating value"
-	if err.Error() != wantError {
+	if !strings.Contains(err.Error(), wantError) {
 		t.Errorf("got: %q, want: %q", err, wantError)
 	}
 }

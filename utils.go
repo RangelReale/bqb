@@ -183,8 +183,8 @@ func checkParamCounts(text, original string, args []any) error {
 	}
 
 	paramCount := strings.Count(text, paramPh)
-	if paramCount < len(args) {
-		return fmt.Errorf("missing ? in text: %v (%d args)", original, len(args))
+	if paramCount != len(args) {
+		return fmt.Errorf("expected %d arguments got %d", paramCount, len(args))
 	}
 	return nil
 }
