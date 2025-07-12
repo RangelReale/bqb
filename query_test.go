@@ -747,6 +747,23 @@ func TestValuerError(t *testing.T) {
 	}
 }
 
+func TestPHEscape(t *testing.T) {
+	q := New("(?) "+paramPh+" xx", "test")
+	sql, params, err := q.ToSql()
+	if err != nil {
+		t.Errorf("got error: %v", err)
+	}
+
+	if len(params) != 1 {
+		t.Errorf("invalid params")
+	}
+
+	want := "(?)"
+	if sql != want {
+		t.Errorf("got: %q, want: %q", sql, want)
+	}
+}
+
 func Benchmark_ToMysql_Params(b *testing.B) {
 	parts := []string{}
 	args := []any{}
