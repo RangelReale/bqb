@@ -32,14 +32,7 @@ type Embedder interface {
 type Expanded[T any] []T
 
 func (e Expanded[T]) ExpandItems() []any {
-	if len(e) == 0 {
-		return nil
-	}
-	ret := make([]any, len(e))
-	for idx, item := range e {
-		ret[idx] = item
-	}
-	return ret
+	return sliceToAny(e)
 }
 
 func Expand[T any](v []T) Expanded[T] {
@@ -57,11 +50,15 @@ func (e ExpandedJoin[T]) ExpandJoin(values []string) string {
 	return e.join(values)
 }
 
-func ExpandJoinFunc[T any](v []T, join func([]string) string) ExpandedJoin[T] {
+func ExpandedJoinFunc[T any](e Expanded[T], join func([]string) string) ExpandedJoin[T] {
 	return ExpandedJoin[T]{
-		Expanded: Expanded[T](v),
+		Expanded: e,
 		join:     join,
 	}
+}
+
+func ExpandJoinFunc[T any](v []T, join func([]string) string) ExpandedJoin[T] {
+	return ExpandedJoinFunc(Expanded[T](v), join)
 }
 
 func ExpandJoin[T any](v []T, join string) ExpandedJoin[T] {

@@ -98,3 +98,28 @@ func TestEmbedded(t *testing.T) {
 	}
 
 }
+
+type expander []string
+
+func (e expander) ExpandItems() []any {
+	return sliceToAny(e)
+}
+
+func TestExpander(t *testing.T) {
+	q := New("SELECT id FROM ? WHERE name IN (?)", Embedded("table"), expander{"john", "mary"})
+	sql, args, err := q.ToSql()
+
+	if err != nil {
+		t.Errorf("got error: %v", err)
+	}
+
+	want := "SELECT id FROM table WHERE name IN (?,?)"
+	if want != sql {
+		t.Errorf("\n got:%v\nwant:%v", sql, want)
+	}
+
+	wantArgs := []any{"john", "mary"}
+	if !reflect.DeepEqual(args, wantArgs) {
+		t.Errorf("\n got:%v\nwant:%v", args, wantArgs)
+	}
+}

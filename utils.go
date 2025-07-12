@@ -239,3 +239,14 @@ func paramToRaw(param any) (string, error) {
 		return "", fmt.Errorf("unsupported type for Raw query: %T", p)
 	}
 }
+
+func sliceToAny[T any](list []T) []any {
+	if len(list) == 0 {
+		return nil
+	}
+	ret := make([]any, len(list))
+	for idx, item := range list {
+		ret[idx] = item
+	}
+	return ret
+}
