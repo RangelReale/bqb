@@ -59,6 +59,15 @@ func convertArg(text string, arg any) (string, []any, []error) {
 		} else {
 			newArgs = append(newArgs, val)
 		}
+
+	case Expander:
+		newPh := []string{}
+		for _, i := range v.ExpandItems() {
+			newPh = append(newPh, paramPh)
+			newArgs = append(newArgs, i)
+		}
+		text = strings.Replace(text, "?", strings.Join(newPh, ","), 1)
+
 	case []int:
 		newPh := []string{}
 		for _, i := range v {

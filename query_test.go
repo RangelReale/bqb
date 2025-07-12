@@ -38,14 +38,14 @@ func TestFolded(t *testing.T) {
 
 func TestArrays(t *testing.T) {
 	// float64 does not expand automatically
-	q := New("(?) (?) (?) (?) (?) (?) (?)", []string{"a", "b"}, []string{}, []*string{}, []int{1, 2}, []*int{}, []any{1.2, 1.3, 1.4}, []float64{1.1, 1.2})
+	q := New("(?) (?) (?) (?) (?) (?) (?) (?)", []string{"a", "b"}, []string{}, []*string{}, []int{1, 2}, []*int{}, []any{1.2, 1.3, 1.4}, []float64{1.1, 1.2}, NewExpanded([]int16{14, 16}))
 	sql, params, _ := q.ToSql()
 
-	if len(params) != 10 {
-		t.Errorf("invalid params")
+	if len(params) != 12 {
+		t.Errorf("invalid params; got: %v, want: %v", len(params), 12)
 	}
 
-	want := "(?,?) () (?) (?,?) (?) (?,?,?) (?)"
+	want := "(?,?) () (?) (?,?) (?) (?,?,?) (?) (?,?)"
 	if sql != want {
 		t.Errorf("got: %q, want: %q", sql, want)
 	}

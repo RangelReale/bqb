@@ -27,6 +27,24 @@ type Embedder interface {
 	RawValue() string
 }
 
+type Expanded[T any] []T
+
+func (e Expanded[T]) ExpandItems() []any {
+	var ret []any
+	for _, item := range e {
+		ret = append(ret, item)
+	}
+	return ret
+}
+
+func NewExpanded[T any](v []T) Expanded[T] {
+	return Expanded[T](v)
+}
+
+type Expander interface {
+	ExpandItems() []any
+}
+
 // JsonMap is a custom type which tells bqb to convert the parameter to
 // a JSON object without requiring reflection.
 type JsonMap map[string]any
